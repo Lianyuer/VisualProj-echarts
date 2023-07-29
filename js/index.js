@@ -1,0 +1,3 @@
+checkLogin()
+renderUserName()
+registerLogout()
