@@ -104,23 +104,33 @@
       2.点击注册按钮  收集表单数据
       3.非空验证  
       4.发送请求
-      5，处理响应
-    
+      5.处理响应
     */
-    
-    
-
-
-    // 收集表单数据
-
-      // console.log(data.username)  //undefined
+    const regBtn = document.querySelector('#btn-register')
+    const form = document.querySelector('form')
+    regBtn.addEventListener('click', async function () {
+      // 收集表单数据
+      const data = serialize(form, { hash: true })
+      // console.log(data.username)
       // 非空校验
-      
-      
-
+      if (!data.username.trim()) { tip('用户名不能为空') }
+      if (!data.password.trim()) { tip('密码不能为空') }
+      if (data.password.length < 6) { tip('密码长度不能少于6位') }
       // 发送请求
-
-
+      try {
+        await axios.post('/register', data)
+        tip('注册成功')
+        setTimeout(() => {
+          location.href = "./login.html"
+        }, 500)
+      } catch (err) {
+        // console.log(err);
+        if (err.response.status === 409) {
+          return tip(err.response.data.message)
+        }
+        tip('服务器繁忙，注册失败')
+      }
+    })
   </script>
 </body>
 
