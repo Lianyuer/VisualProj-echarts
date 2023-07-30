@@ -13,6 +13,42 @@
 
 axios.defaults.baseURL = 'http://ajax-api.itheima.net'
 
+// 添加请求拦截器
+axios.interceptors.request.use(function (config) {
+  console.log(config);
+  // 在发送请求之前做些什么
+  const token = localStorage.getItem('user-token')
+  if (token) {
+    config.headers['Authorization'] = token
+  }
+  return config;
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error);
+});
+
+// 添加响应拦截器
+axios.interceptors.response.use(function (response) {
+  // 2xx 范围内的状态码都会触发该函数。
+  // 对响应数据做点什么
+  return response.data;
+}, function (error) {
+  console.log(error);
+  if (error.response.status !== 200) {
+    // 删除本地存储的数据
+    localStorage.removeItem('username')
+    localStorage.removeItem('user-token')
+
+    tip('请重新登录')
+    setTimeout(function () {
+      location.href = 'login.html'
+    }, 1000)
+  }
+  // 超出 2xx 范围的状态码都会触发该函数。
+  // 对响应错误做点什么
+  return Promise.reject(error);
+});
+
 // 封装toast提示函数
 function tip(msg) {
   const toastDom = document.querySelector('#myToast')
@@ -58,6 +94,24 @@ function registerLogout() {
     // 跳转到登录页面
     location.href = 'login.html'
   })
-
 }
 
+// 首页-数据统计
+// 调用接口---渲染数据
+async function getData() {
+  // 读取本地缓存中的token
+  const token = localStorage.getItem('user-token')
+  // 调用接口
+  const res = await axios({
+    url: '/dashboard',
+  })
+  console.log(res);
+  const overview = res.data.overview
+  console.log(overview);
+
+  // 渲染数据
+  Object.keys(overview).forEach(key => {
+    console.log(key);
+    document.querySelector(`.${key}`).innerText = overview[key]
+  })
+}

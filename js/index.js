@@ -1,3 +1,4 @@
 checkLogin()
 renderUserName()
 registerLogout()
+getData()
