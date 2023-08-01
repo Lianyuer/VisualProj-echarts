@@ -106,7 +106,8 @@ async function getData() {
     url: '/dashboard',
   })
   console.log(res);
-  const overview = res.data.overview
+
+  const { groupData, overview, provinceData, salaryData, year } = res.data
   console.log(overview);
 
   // 渲染数据
@@ -114,4 +115,10 @@ async function getData() {
     console.log(key);
     document.querySelector(`.${key}`).innerText = overview[key]
   })
+  console.log(year);
+  renderYearSalary(year)
+  renderSalary(salaryData)
+  renderGroupSalary(groupData)
+  renderGenderSalary(salaryData)
+  renderProvince(provinceData)
 }
